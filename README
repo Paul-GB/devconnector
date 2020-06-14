@@ -1,0 +1,197 @@
+README
+
+GitHub: [Paul-GB] vcfrgmailAOCtb1-2.
+Heroku: vcfrgmailAOCtb1-2.
+MongoDB Atlas: vcfrgmailAOCtb1-2.
+Udemy: vcfrgmailAOlmbl..tb.2! 
+
+____________
+GIT & GITHUB
+
+_________
+uploading 
+
+create new repository in github
+
+On local, push an existing repository from the command line
+git remote add origin https://github.com/StephenGrider/myproject.git
+git push -u origin master
+
+_______
+Cloning
+git clone https://github.com/StephenGrider/FullstackReactCode.git
+
+
+
+
+___________________________________________________________
+MERN: DEVCONNECTOR PROJECT FROM SCRACTH ON THU JUN 4th 2020 
+_____________
+MONGODB ATLAS
+
+1. create new project: MERN
+2. create new cluster AWS/East Virginia: DevConnector
+3. create MongoDB users: SCRAM Paul/admin with RW to any dbs
+4. Add IP address to the whiteList with Allow Access from Anywhere 
+Copy the address to connect your app to your cluster using MongoD's' native drivers
+mongodb+srv://<username>:<password>@devconnector-7fvk1.mongodb.net/<dbname>?retryWrites=true&w=majority
+<padminx2>/<puserx2>
+
+ _____________________
+| LOCAL APP DIRECTORY |
+|_____________________|
+
+______________________
+step 1 - Initial setup -> ok
+
+1. mkdir repository/devconnector
+2. create .gitignore + add node_modules/
+3. git init
+4. npm init - entry point = server.js
+5. install some regular dependencies 
+   npm i express express-validator bcryptjs config gravatar jsonwebtoken mongoose request
+6. install some dev dependencies
+   npm i -D nodemon concurrently   
+7. create server.js 
+8. create some npm scripts in package.json:
+  "scripts": {
+    "start": "node server",
+    "server": "nodemon server"
+  }
+9. npm run server then make a GET request from Postman to make sure that everything is running
+10. git add . & git commit -m 'Initial commit'
+
+____________________________________________
+step 2 - Connecting to MongoDB with Mongoose -> ok
+
+11. create file config/default.json
+    {
+      "mongoURI":"mongodb+srv://<username>:<password>@devconnector-7fvk1.mongodb.net/<dbname>?retryWrites=true&w=majority"
+    }
+12. create file config/db.js
+const mongoose = require('mongoose');
+const config = require('config');
+const db = config.get('mongoURI');
+
+// instead of connecting to mongoDB like that mongoose.connect(db)
+// use async method and promise as below
+const connectDB = async () => {
+  try {
+    await mongoose.connect(db, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+    console.log('MongoDB connected...');
+  } catch (err) {
+    console.error(err.message);
+    // Exit process with failure
+    process.exit(1);
+  }
+};
+
+module.exports = connectDB;
+
+13. server.js: import and run connectDB just after const app = express(); 
+________________________________________
+step 3 - Route Files with Express Router -> ok
+
+14. create routes/api/users.js, routes/api/auth.js, routes/api/profile.js, routes/api/posts.js
+15. Postman: create 3 collections Users & Auth - Profiles - Posts
+
+________________________________
+step 4 - Creating the User Model -> ok
+
+16. create models/User.js (by convention in Upper case for model)
+const mongoose = require('mongoose');
+
+const UserSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true,
+  },
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  password: {
+    type: String,
+    required: true,
+  },
+  date: {
+    tyep: Date,
+    default: Date.now,
+  },
+});
+
+module.exports = User = mongoose.model('user', UserSchema);
+
+
+__________________________________
+step 5 - Request & Body validation  -> ok
+
+17a. So now replace GET by POST request for users route in users.js
+// @route POST api/users
+// @desc Test route
+// @access Public
+router.post('/', (req, res) => {
+  console.log(req.body);
+  res.send('User route');
+});
+
+17b. ... and initialize middleware in server.js as below after connectDB();
+// init middleware
+app.use(express.json({ extended: false })); 
+17c. ... and make a POST request from Postman with:
+  Header Key:Content-Type, Value:application/json
+  Body raw 
+  {
+	"name": "Dan  Huy",
+	"email": "dan.huy@test.ca",
+	"password": "987654"
+}
+
+You should get in the console log:
+Server started on port 5000
+MongoDB connected...
+{ name: 'Dan  Huy', email: 'dan.huy@test.ca', password: '987654' }
+
+18. IMPORTANT: you can enhance validation with express-validator package (not express-validator/check)
+routes/api/(users.js: See extra code in router.post())
+A. Use check function to implement validation rules
+B. Use validationResult function to return an array of errors if any
+
+Make some POST requests to get errors back:
+{
+    "errors": [
+        {
+            "msg": "Name is required",
+            "param": "name",
+            "location": "body"
+        },
+        {
+            "msg": "Please include a valid email",
+            "param": "email",
+            "location": "body"
+        },
+        {
+            "msg": "Please enter a password with 6 or more characters",
+            "param": "password",
+            "location": "body"
+        }
+    ]
+}
+
+________________________________________
+step 6 - User Registration & JWT & Login
+
+Section 3 finished -> tests ok
+
+commit -m "devconnector version 2" 
+
+___________________________
+step 7 - Profile API Routes
+
+End of section 4 - tests ok (Github Repo for Profile excluded)
+WARNING: delete repository devconnector
+commit -m "devconnector v1.0: end of section 4 "
