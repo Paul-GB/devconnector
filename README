@@ -195,3 +195,10 @@ step 7 - Profile API Routes
 End of section 4 - tests ok (Github Repo for Profile excluded)
 WARNING: delete repository devconnector
 commit -m "devconnector v1.0: end of section 4 "
+
+___________________________
+step 8 - BACK-END dev
+
+End of section 5 - tests ok 
+
+commit -m "devconnector v2.0: end of section 5 back-end dev done "
